@@ -1,20 +1,37 @@
 #include <iostream>
 #include <thread>
+
+
+#include <termios.h>
 #include "Timer.hpp"
 #include "OneShotRunner.hpp"
 #include "RecurrentRunner.hpp"
+#include <ncurses.h>
 
 int main()
 {
+
   OneShotRunner oneShotRunner{};
   RecurrentRunner recurrentRunner{};
-  Timer t{oneShotRunner};
+  Timer oneShotTimer{oneShotRunner};
+  Timer recurrentTimer{recurrentRunner};
+
+  oneShotTimer.start([](){ printf("oneShotTimer\n\r"); }, secondsDouble{2});
+  recurrentTimer.start([](){ printf("recurrentTimer\n\r"); }, secondsDouble{1});
   
-  t.start([](){std::cout<<"a"<<std::endl;}, secondsDouble{1.1});
-  for(int i=0;i<3;i++)
-  std::cout<<t.getElapsedTime().count()<<std::endl;
-  //
-  std::this_thread::sleep_for(std::chrono::seconds{3});
-  t.stop();
+  initscr();
+  timeout(-1);  
+  char c = '_';
+  while (c != 'e')
+  {
+    c = getch();
+    if (c == 'p')
+    {
+      printf("%f \n\r", oneShotTimer.getElapsedTime().count());
+    }
+  }
+  endwin();
+  oneShotTimer.stop();
+  recurrentTimer.stop();
   return 0;
 }

@@ -1,8 +1,6 @@
-#include <iostream>
 #include <functional>
 #include <chrono>
 #include <thread>
-#include <mutex>
 #include <condition_variable>
 #include "IRunner.hpp"
 
