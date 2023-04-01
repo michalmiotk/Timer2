@@ -3,10 +3,12 @@
 
 
 #include <termios.h>
+#include <ncurses.h>
+
 #include "Timer.hpp"
 #include "OneShotRunner.hpp"
 #include "RecurrentRunner.hpp"
-#include <ncurses.h>
+
 
 int main()
 {
@@ -27,7 +29,7 @@ int main()
     c = getch();
     if (c == 'p')
     {
-      printf("%f \n\r", oneShotTimer.getElapsedTime().count());
+      printf("%f s\n\r", oneShotTimer.getElapsedTime().count());
     }
   }
   endwin();

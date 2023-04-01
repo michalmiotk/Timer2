@@ -3,11 +3,7 @@
 #include <thread>
 #include <condition_variable>
 #include "IRunner.hpp"
-
-enum class State{
-    start,
-    stop
-};
+#include "Stoper.hpp"
 
 template <typename T=secondsDouble>
 struct Timer{
@@ -17,8 +13,7 @@ struct Timer{
     T getElapsedTime() const;
 private:
     IRunner<T>& runner;
-    std::chrono::time_point<std::chrono::steady_clock> startTime;
-    std::chrono::time_point<std::chrono::steady_clock> stopTime;
+    Stoper<T> stoper;
     std::jthread t;
     State state{State::stop};
 };
@@ -30,7 +25,7 @@ void Timer<T>::start(std::function<void(void)>&& fn, T interval){
     {
         return;
     }
-    startTime = std::chrono::steady_clock::now();
+    stoper.start();
     t = std::jthread(&IRunner<T>::run, std::ref(runner), std::forward<std::function<void(void)>>(fn), interval);
     state = State::start;
 }
@@ -41,17 +36,11 @@ void Timer<T>::stop(){
         return;
     }
     state = State::stop;
-    stopTime = std::chrono::steady_clock::now();
+    stoper.stop();
     runner.stop();
 }
 
 template <typename T>
 T Timer<T>::getElapsedTime() const{
-    if(state == State::stop)
-    {
-        std::cout<<"state stop";
-        auto timeDiff = stopTime - startTime;
-        return std::chrono::duration_cast<T>(timeDiff);
-    }
-    return std::chrono::duration_cast<T>(std::chrono::steady_clock::now() - startTime);
+   return stoper.getElapsedTime();
 }
