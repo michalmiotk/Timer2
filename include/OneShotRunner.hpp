@@ -6,24 +6,30 @@
 
 
 template <typename T=secondsDouble>
-struct OneShotRunner:  IRunner<T>{
+class OneShotRunner: public IRunner<T>{
+public:
+    void stop() override;
+    void run(std::function<void()> fn, T timeToStart) override;
+private:
     std::condition_variable cv;
-    
-    void stop() override{
-        cv.notify_one();
-    }
+};
 
-    void run(std::function<void()> fn, T timeToStart){
-        std::mutex m;
-        std::unique_lock<std::mutex> l(m);
-        auto status = cv.wait_for(l, timeToStart);
-        if(status == std::cv_status::timeout){
-            fn();
-        }else{
-            if(status == std::cv_status::no_timeout)
-            {
-                std::cout<<"somebody pressed stop"<<std::endl;
-            }
+template <typename T>
+void OneShotRunner<T>::stop(){
+    cv.notify_one();
+}
+
+template <typename T>
+void OneShotRunner<T>::run(std::function<void()> fn, T timeToStart){
+    std::mutex m;
+    std::unique_lock<std::mutex> l(m);
+    auto status = cv.wait_for(l, timeToStart);
+    if(status == std::cv_status::timeout){
+        fn();
+    }else{
+        if(status == std::cv_status::no_timeout)
+        {
+            std::cout<<"somebody pressed stop"<<std::endl;
         }
     }
-};
+}

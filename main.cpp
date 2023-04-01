@@ -8,15 +8,14 @@
 #include "Timer.hpp"
 #include "OneShotRunner.hpp"
 #include "RecurrentRunner.hpp"
-
+#include "Stoper.hpp"
+#include "types.hpp"
+#include "IStoper.hpp"
 
 int main()
 {
-
-  OneShotRunner oneShotRunner{};
-  RecurrentRunner recurrentRunner{};
-  Timer oneShotTimer{oneShotRunner};
-  Timer recurrentTimer{recurrentRunner};
+  Timer<secondsDouble> oneShotTimer{std::make_unique<OneShotRunner<secondsDouble>>(), std::make_unique<Stoper<secondsDouble>>()};
+  Timer<secondsDouble> recurrentTimer{std::make_unique<RecurrentRunner<secondsDouble>>(), std::make_unique<Stoper<secondsDouble>>()};
 
   oneShotTimer.start([](){ printf("oneShotTimer\n\r"); }, secondsDouble{2});
   recurrentTimer.start([](){ printf("recurrentTimer\n\r"); }, secondsDouble{1});

@@ -4,16 +4,19 @@
 #include <condition_variable>
 #include "IRunner.hpp"
 #include "Stoper.hpp"
+#include <memory>
+
 
 template <typename T=secondsDouble>
-struct Timer{
-    Timer(IRunner<T>& runner): runner(runner){};
+class Timer{
+public:
+    Timer(std::unique_ptr<IRunner<T>> runner, std::unique_ptr<IStoper<T>> stoper): runner(std::move(runner)), stoper(std::move(stoper)){};
     void start(std::function<void(void)>&&, T);
     void stop();
     T getElapsedTime() const;
 private:
-    IRunner<T>& runner;
-    Stoper<T> stoper;
+    std::unique_ptr<IRunner<T>> runner;
+    std::unique_ptr<IStoper<T>> stoper;
     std::jthread t;
     State state{State::stop};
 };
@@ -25,8 +28,8 @@ void Timer<T>::start(std::function<void(void)>&& fn, T interval){
     {
         return;
     }
-    stoper.start();
-    t = std::jthread(&IRunner<T>::run, std::ref(runner), std::forward<std::function<void(void)>>(fn), interval);
+    stoper->start();
+    t = std::jthread(&IRunner<T>::run, std::ref(*runner), std::forward<std::function<void(void)>>(fn), interval);
     state = State::start;
 }
 
@@ -36,11 +39,11 @@ void Timer<T>::stop(){
         return;
     }
     state = State::stop;
-    stoper.stop();
-    runner.stop();
+    stoper->stop();
+    runner->stop();
 }
 
 template <typename T>
 T Timer<T>::getElapsedTime() const{
-   return stoper.getElapsedTime();
+   return stoper->getElapsedTime();
 }

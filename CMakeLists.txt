@@ -1,7 +1,7 @@
 project(x)
 cmake_minimum_required(VERSION 3.1)
 set(CMAKE_CXX_COMPILER g++)
-add_compile_options(-Wall -Wextra -Wpedantic --std=c++20)
+add_compile_options(-Wall -Wextra -Wpedantic --std=c++23)
 
 find_library(curses NAMES curses)
 

@@ -1,12 +1,17 @@
+#pragma once
+
 #include <chrono>
 
 #include "types.hpp"
+#include "IStoper.hpp"
+
 
 template <typename T=secondsDouble>
-struct Stoper{
-    T getElapsedTime() const;
-    void start();
-    void stop();
+class Stoper: public IStoper<T>{
+public:
+    T getElapsedTime() const override;
+    void start() override;
+    void stop() override;
 private:
     State state{State::stop};
     std::chrono::time_point<std::chrono::steady_clock> startTime;
