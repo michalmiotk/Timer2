@@ -6,7 +6,6 @@
 #include "types.hpp"
 
 
-
 template <typename T=secondsDouble>
 class IRunner{
 public:

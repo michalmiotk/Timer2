@@ -7,43 +7,42 @@
 #include <memory>
 
 
-template <typename T=secondsDouble>
+template <typename TimerInterval=std::chrono::milliseconds, typename T=secondsDouble>
 class Timer{
 public:
-    Timer(std::unique_ptr<IRunner<T>> runner, std::unique_ptr<IStoper<T>> stoper): runner(std::move(runner)), stoper(std::move(stoper)){};
-    void start(std::function<void(void)>&&, T);
+    Timer(std::unique_ptr<IRunner<TimerInterval>> runner, std::unique_ptr<IStoper<T>> stoper): runner(std::move(runner)), stoper(std::move(stoper)){};
+    void start(std::function<void(void)>&&, TimerInterval);
     void stop();
     T getElapsedTime() const;
 private:
-    std::unique_ptr<IRunner<T>> runner;
+    std::unique_ptr<IRunner<TimerInterval>> runner;
     std::unique_ptr<IStoper<T>> stoper;
     std::jthread t;
     State state{State::stop};
 };
 
 
-template <typename T>
-void Timer<T>::start(std::function<void(void)>&& fn, T interval){
+template <typename TimerInterval, typename T>
+void Timer<TimerInterval, T>::start(std::function<void(void)>&& fn, TimerInterval interval){
     if(state==State::start)
     {
         return;
     }
     stoper->start();
-    t = std::jthread(&IRunner<T>::run, std::ref(*runner), std::forward<std::function<void(void)>>(fn), interval);
+    t = std::jthread(&IRunner<TimerInterval>::run, std::ref(*runner), fn, interval);
     state = State::start;
 }
 
-template <typename T>
-void Timer<T>::stop(){
+template <typename TimerInterval, typename T>
+void Timer<TimerInterval, T>::stop(){
     if(state == State::stop){
         return;
     }
     state = State::stop;
-    stoper->stop();
     runner->stop();
 }
 
-template <typename T>
-T Timer<T>::getElapsedTime() const{
+template <typename TimerInterval, typename T>
+T Timer<TimerInterval, T>::getElapsedTime() const{
    return stoper->getElapsedTime();
 }

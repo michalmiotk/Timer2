@@ -5,7 +5,7 @@
 #include "IRunner.hpp"
 
 
-template <typename T=secondsDouble>
+template <typename T=std::chrono::milliseconds>
 class OneShotRunner: public IRunner<T>{
 public:
     void stop() override;
@@ -29,7 +29,7 @@ void OneShotRunner<T>::run(std::function<void()> fn, T timeToStart){
     }else{
         if(status == std::cv_status::no_timeout)
         {
-            std::cout<<"somebody pressed stop"<<std::endl;
+            std::cout<<"somebody asked stop"<<std::endl;
         }
     }
 }

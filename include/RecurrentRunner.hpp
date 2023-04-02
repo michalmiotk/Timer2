@@ -5,7 +5,7 @@
 #include "IRunner.hpp"
 
 
-template <typename T=secondsDouble>
+template <typename T=std::chrono::milliseconds>
 class RecurrentRunner: public IRunner<T>{
 public:
     void stop() override;

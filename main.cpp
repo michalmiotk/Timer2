@@ -1,8 +1,5 @@
 #include <iostream>
-#include <thread>
 
-
-#include <termios.h>
 #include <ncurses.h>
 
 #include "Timer.hpp"
@@ -10,23 +7,28 @@
 #include "RecurrentRunner.hpp"
 #include "Stoper.hpp"
 #include "types.hpp"
-#include "IStoper.hpp"
+
 
 int main()
 {
-  Timer<secondsDouble> oneShotTimer{std::make_unique<OneShotRunner<secondsDouble>>(), std::make_unique<Stoper<secondsDouble>>()};
-  Timer<secondsDouble> recurrentTimer{std::make_unique<RecurrentRunner<secondsDouble>>(), std::make_unique<Stoper<secondsDouble>>()};
-
-  oneShotTimer.start([](){ printf("oneShotTimer\n\r"); }, secondsDouble{2});
-  recurrentTimer.start([](){ printf("recurrentTimer\n\r"); }, secondsDouble{1});
+  Timer<> oneShotTimer{std::make_unique<OneShotRunner<>>(), std::make_unique<Stoper<>>()};
+  Timer<> recurrentTimer{std::make_unique<RecurrentRunner<>>(), std::make_unique<Stoper<>>()};
+  Timer<> recurrentTimer150{std::make_unique<RecurrentRunner<>>(), std::make_unique<Stoper<>>()};
   
+  std::string userInput;
+  std::cout<<"please give time interval in seconds and press ENTER"<<std::endl;
+  std::cin>>userInput;
+  auto timeInSeconds = std::stoi(userInput); 
+  oneShotTimer.start([](){ printf("Hello, I'm a single shot\n\r"); }, std::chrono::seconds{3*timeInSeconds});
+  recurrentTimer.start([](){ printf("Running...\n\r"); }, std::chrono::seconds{timeInSeconds});
+  recurrentTimer150.start([](){ printf("Walking...\n\r"); }, std::chrono::seconds{int(1.5*timeInSeconds)});
   initscr();
   timeout(-1);  
   char c = '_';
-  while (c != 'e')
+  while (c != 'Q')
   {
     c = getch();
-    if (c == 'p')
+    if (c == 'E')
     {
       printf("%f s\n\r", oneShotTimer.getElapsedTime().count());
     }
@@ -34,5 +36,6 @@ int main()
   endwin();
   oneShotTimer.stop();
   recurrentTimer.stop();
+  recurrentTimer150.stop();
   return 0;
 }
