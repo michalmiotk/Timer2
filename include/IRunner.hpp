@@ -11,4 +11,10 @@ class IRunner{
 public:
     virtual void stop() = 0;
     virtual void run(std::function<void()> fn, T timeToStart) = 0;
+    virtual ~IRunner();
 };
+
+template <typename T>
+IRunner<T>::~IRunner()
+{
+}

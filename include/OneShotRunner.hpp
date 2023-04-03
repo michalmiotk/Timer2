@@ -26,10 +26,5 @@ void OneShotRunner<T>::run(std::function<void()> fn, T timeToStart){
     auto status = cv.wait_for(l, timeToStart);
     if(status == std::cv_status::timeout){
         fn();
-    }else{
-        if(status == std::cv_status::no_timeout)
-        {
-            std::cout<<"somebody asked stop"<<std::endl;
-        }
     }
 }
