@@ -51,29 +51,21 @@ TEST_F(TestTimer, givenTimerWithRecurrentRunner_whenStartIsCalled_thenExpectCall
 
     recurrentTimer.start(mockCallback.AsStdFunction(), interval);    
 }
-/*
-TEST_F(TestTimer, givenOneShotTimer_whenSomeTimePassedFromCallingstart_thenExpectGetElapsedTimeReturnTime)
+
+TEST_F(TestTimer, givenOneShotTimer_whenTimerFires_thenExpectGetElapsedTimeReturnAtLeastInterval)
 {
     Timer<> oneShotTimer{std::make_unique<OneShotRunner<>>(), std::make_unique<Stoper<>>()};
-    
-    oneShotTimer.start([](){}, interval);
-    std::this_thread::sleep_for(interval*factorWait);    
-    
-    const auto getElapsedTimeCallResult = oneShotTimer.getElapsedTime();
-
-    const auto minimumExpectedWait = interval;
-    const auto maximumExpectedWait = 2 * interval*factorWait;
-    ASSERT_GE(getElapsedTimeCallResult, minimumExpectedWait);
-    ASSERT_LE(getElapsedTimeCallResult, maximumExpectedWait);
+    auto functionToStart = [&oneShotTimer, interval=interval](){ASSERT_GE(oneShotTimer.getElapsedTime(), interval);};
+    oneShotTimer.start(functionToStart, interval);    
 }
-*/
+
 
 TEST_F(TestTimer, givenTimer_whenCallingstart_thenExpectStoperstartMethodBeCalled)
 {
     EXPECT_CALL(*strictMockStoperPtr, start());
     Timer<> timer{std::make_unique<OneShotRunner<>>(), std::move(strictMockStoperPtr)};
     
-    timer.start([](){}, interval);
+    timer.start([]{}, interval);
     timer.stop();
 }
 
