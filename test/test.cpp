@@ -21,7 +21,6 @@ class TestTimer : public ::testing::Test
 protected:
     MockFunction<void(void)> mockCallback;
     const std::chrono::milliseconds interval{1};
-    const int factorWait{10};
     std::unique_ptr<NiceMock<MockStoper<>>> niceMockStoperPtr = std::make_unique<NiceMock<MockStoper<>>>();
     std::unique_ptr<StrictMock<MockStoper<>>> strictMockStoperPtr = std::make_unique<StrictMock<MockStoper<>>>();
 };
@@ -33,13 +32,18 @@ TEST_F(TestTimer, givenTimerWithOneShotRunner_whenStartIsCalled_thenExpectCallCa
     Timer<> oneShotTimer{std::make_unique<OneShotRunner<>>(), std::move(niceMockStoperPtr)};
     
     oneShotTimer.start(mockCallback.AsStdFunction(), interval);
-    std::this_thread::sleep_for(interval*factorWait);    
+}
+
+TEST_F(TestTimer, givenTimerWithRecurrentRunner_whenStopIsCalledRightAfterStart_thenExpectNoRunForever){
+    Timer<> recurrentTimer{std::make_unique<RecurrentRunner<>>(), std::move(niceMockStoperPtr)};
+    recurrentTimer.start([]{}, interval);
+    recurrentTimer.stop();
 }
 
 TEST_F(TestTimer, givenTimerWithRecurrentRunner_whenStartIsCalled_thenExpectCallCallbackAtLeastTwoTimes)
 {
     int actualCalled{};
-    const int timesToBeCalled = 2;
+    constexpr int timesToBeCalled{2};
     Timer<> recurrentTimer{std::make_unique<RecurrentRunner<>>(), std::move(niceMockStoperPtr)};
     EXPECT_CALL(mockCallback, Call()).Times(AtLeast(timesToBeCalled)).WillRepeatedly(Invoke([&actualCalled, &recurrentTimer](){
         if(actualCalled < timesToBeCalled){
@@ -70,16 +74,19 @@ TEST_F(TestTimer, givenTimer_whenCallingstart_thenExpectStoperstartMethodBeCalle
 }
 
 
-TEST_F(TestTimer, givenNotStartedTimer_whengetElapsedTimeIsCalled_thenExpectReturnZeroMs)
+TEST_F(TestTimer, givenNotStartedTimer_whengetElapsedTimeIsCalledAfterAtLeast10ms_thenExpectReturnZeroMs)
 {
-    std::chrono::milliseconds expectedResultOfGetElapsedTime{};
+    constexpr std::chrono::milliseconds timeToWait{10};
+    constexpr std::chrono::milliseconds expectedResult{};
     Timer<> timer{std::make_unique<OneShotRunner<>>(), std::make_unique<Stoper<>>()};
-    std::this_thread::sleep_for(interval*factorWait);
+    std::this_thread::sleep_for(timeToWait);
 
     const auto resultOfGetElapsedTime = timer.getElapsedTime();
 
-    EXPECT_EQ(resultOfGetElapsedTime, expectedResultOfGetElapsedTime);
+    EXPECT_EQ(resultOfGetElapsedTime, expectedResult);
 }
+
+
 
 int main(int argc, char **argv)
 {
