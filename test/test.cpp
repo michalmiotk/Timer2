@@ -38,15 +38,18 @@ TEST_F(TestTimer, givenTimerWithOneShotRunner_whenStartIsCalled_thenExpectCallCa
 
 TEST_F(TestTimer, givenTimerWithRecurrentRunner_whenStartIsCalled_thenExpectCallCallbackAtLeastTwoTimes)
 {
+    int actualCalled{};
     const int timesToBeCalled = 2;
-    EXPECT_CALL(mockCallback, Call()).Times(AtLeast(2));
-
     Timer<> recurrentTimer{std::make_unique<RecurrentRunner<>>(), std::move(niceMockStoperPtr)};
-    
-    recurrentTimer.start(mockCallback.AsStdFunction(), interval);
-    std::this_thread::sleep_for(interval*factorWait*timesToBeCalled);
-    recurrentTimer.stop();
-    std::cout<<"qoni"<<std::endl;
+    EXPECT_CALL(mockCallback, Call()).Times(AtLeast(timesToBeCalled)).WillRepeatedly(Invoke([&actualCalled, &recurrentTimer](){
+        if(actualCalled < timesToBeCalled){
+            actualCalled++;
+        }else{
+            recurrentTimer.stop();
+        }
+    }));
+
+    recurrentTimer.start(mockCallback.AsStdFunction(), interval);    
 }
 /*
 TEST_F(TestTimer, givenOneShotTimer_whenSomeTimePassedFromCallingstart_thenExpectGetElapsedTimeReturnTime)
