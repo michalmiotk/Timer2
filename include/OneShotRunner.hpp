@@ -1,6 +1,6 @@
 #include <functional>
 #include <chrono>
-#include <condition_variable>
+#include <future>
 
 #include "IRunner.hpp"
 
@@ -10,21 +10,25 @@ class OneShotRunner: public IRunner<T>{
 public:
     void stop() override;
     void run(std::function<void()> fn, T timeToStart) override;
+    OneShotRunner();
 private:
-    std::condition_variable cv;
+    std::promise<void> stopPromise;
+    std::future<void> stopFuture;
 };
 
 template <typename T>
 void OneShotRunner<T>::stop(){
-    cv.notify_one();
+    stopPromise.set_value();
 }
 
 template <typename T>
 void OneShotRunner<T>::run(std::function<void()> fn, T timeToStart){
-    std::mutex m;
-    std::unique_lock<std::mutex> l(m);
-    auto status = cv.wait_for(l, timeToStart);
-    if(status == std::cv_status::timeout){
+    if(stopFuture.wait_for(timeToStart) == std::future_status::timeout){
         fn();
     }
+}
+
+template <typename T>
+OneShotRunner<T>::OneShotRunner(){
+    stopFuture = stopPromise.get_future();
 }

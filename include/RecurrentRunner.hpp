@@ -1,6 +1,6 @@
 #include <functional>
 #include <chrono>
-#include <condition_variable>
+#include <future>
 
 #include "IRunner.hpp"
 
@@ -10,26 +10,30 @@ class RecurrentRunner: public IRunner<T>{
 public:
     void stop() override;
     void run(std::function<void()> fn, T timeToStart) override;
+    RecurrentRunner();
 private:
-    std::condition_variable cv;
-    bool stopped{false};
+    std::promise<void> stopPromise;
+    std::future<void> stopFuture;
 };
 
 template <typename T>
 void RecurrentRunner<T>::stop(){
-    stopped = true;
-    cv.notify_all();
+    stopPromise.set_value();
 }
 
 template <typename T>
 void RecurrentRunner<T>::run(std::function<void()> fn, T interval){
-     std::mutex m;
-    std::unique_lock<std::mutex> l(m);
-    while(not stopped){
-        if(cv.wait_for(l, interval) == std::cv_status::timeout){
+    while(true){
+        if(stopFuture.wait_for(interval) == std::future_status::timeout)
+        {
             fn();
         }else{
             break;
         }
     }
+}
+
+template <typename T>
+RecurrentRunner<T>::RecurrentRunner(){
+    stopFuture = stopPromise.get_future();
 }
