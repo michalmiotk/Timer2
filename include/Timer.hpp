@@ -9,11 +9,11 @@
 #include "ITimer.hpp"
 
 
-template <typename TimerInterval=std::chrono::milliseconds, typename T=secondsDouble>
+template <typename TimerInterval=std::chrono::milliseconds, typename T=secondsDouble, typename Function=std::function<void()>>
 class Timer: public ITimer<TimerInterval, T>{
 public:
     Timer(std::unique_ptr<IRunner<TimerInterval>> runner, std::unique_ptr<IStoper<T>> stoper): runner(std::move(runner)), stoper(std::move(stoper)){};
-    void start(std::function<void(void)>, TimerInterval);
+    void start(Function, TimerInterval);
     void stop();
     T getElapsedTime() const;
 private:
@@ -24,8 +24,8 @@ private:
 };
 
 
-template <typename TimerInterval, typename T>
-void Timer<TimerInterval, T>::start(std::function<void(void)> fn, TimerInterval interval){
+template <typename TimerInterval, typename T, typename Function>
+void Timer<TimerInterval, T, Function>::start(Function fn, TimerInterval interval){
     if(state==State::start)
     {
         return;
@@ -35,8 +35,8 @@ void Timer<TimerInterval, T>::start(std::function<void(void)> fn, TimerInterval 
     state = State::start;
 }
 
-template <typename TimerInterval, typename T>
-void Timer<TimerInterval, T>::stop(){
+template <typename TimerInterval, typename T, typename Function>
+void Timer<TimerInterval, T, Function>::stop(){
     if(state == State::stop){
         return;
     }
@@ -44,7 +44,7 @@ void Timer<TimerInterval, T>::stop(){
     runner->stop();
 }
 
-template <typename TimerInterval, typename T>
-T Timer<TimerInterval, T>::getElapsedTime() const{
+template <typename TimerInterval, typename T, typename Function>
+T Timer<TimerInterval, T, Function>::getElapsedTime() const{
    return stoper->getElapsedTime();
 }

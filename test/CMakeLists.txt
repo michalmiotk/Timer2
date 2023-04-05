@@ -13,3 +13,5 @@ target_include_directories(test PUBLIC ../include)
 target_link_libraries(test GTest::gtest_main GTest::gmock_main)
 include(GoogleTest)
 gtest_discover_tests(test)
+
+add_custom_command(TARGET test POST_BUILD COMMAND ./test)
