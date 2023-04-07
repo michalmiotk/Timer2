@@ -5,35 +5,35 @@
 #include "IRunner.hpp"
 
 
-template <typename T=std::chrono::milliseconds>
-class RecurrentRunner: public IRunner<T>{
+template <typename Interval=std::chrono::milliseconds, typename Function=std::function<void()>, typename ... Args>
+class RecurrentRunner: public IRunner<Interval, Function, Args...>{
 public:
     void stop() override;
-    void run(std::function<void()> fn, T timeToStart) override;
+    void run(Function, Interval timeToStart, Args...) override;
     RecurrentRunner();
 private:
     std::promise<void> stopPromise;
     std::future<void> stopFuture;
 };
 
-template <typename T>
-void RecurrentRunner<T>::stop(){
+template <typename Interval , typename Function, typename ... Args>
+void RecurrentRunner<Interval, Function, Args...>::stop(){
     stopPromise.set_value();
 }
 
-template <typename T>
-void RecurrentRunner<T>::run(std::function<void()> fn, T interval){
+template <typename Interval , typename Function, typename ... Args>
+void RecurrentRunner<Interval, Function, Args...>::run(Function fn, Interval interval, Args... args){
     while(true){
         if(stopFuture.wait_for(interval) == std::future_status::timeout)
         {
-            fn();
+            fn(args...);
         }else{
             break;
         }
     }
 }
 
-template <typename T>
-RecurrentRunner<T>::RecurrentRunner(){
+template <typename Interval , typename Function, typename ... Args>
+RecurrentRunner<Interval, Function, Args...>::RecurrentRunner(){
     stopFuture = stopPromise.get_future();
 }

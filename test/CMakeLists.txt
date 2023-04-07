@@ -8,10 +8,17 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_executable(test test.cpp)
-target_include_directories(test PUBLIC ../include)
-target_link_libraries(test GTest::gtest_main GTest::gmock_main)
-include(GoogleTest)
-gtest_discover_tests(test)
+add_executable(testTimer testTimer.cpp)
+target_include_directories(testTimer PUBLIC ../include)
+target_link_libraries(testTimer GTest::gtest_main GTest::gmock_main)
 
-add_custom_command(TARGET test POST_BUILD COMMAND ./test)
+add_executable(testOneShotRunner testOneShotRunner.cpp)
+target_include_directories(testOneShotRunner PUBLIC ../include)
+target_link_libraries(testOneShotRunner GTest::gtest_main GTest::gmock_main)
+
+include(GoogleTest)
+gtest_discover_tests(testTimer)
+#gtest_discover_tests(testOneShotRunner)
+
+add_custom_command(TARGET testTimer POST_BUILD COMMAND ./testTimer)
+add_custom_command(TARGET testOneShotRunner POST_BUILD COMMAND ./testOneShotRunner)

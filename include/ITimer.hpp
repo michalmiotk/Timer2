@@ -3,17 +3,14 @@
 
 #include "types.hpp"
 
-
-template <typename TimerInterval=std::chrono::milliseconds, typename T=secondsDouble, typename Function=std::function<void(void)>>
 class ITimer{
 public:
-    void start(Function, TimerInterval);
+    void start(std::function<void(void)>, std::chrono::milliseconds);
     void stop();
-    T getElapsedTime() const;
+    secondsDouble getElapsedTime() const;
     virtual ~ITimer();
 };
 
-template <typename TimerInterval, typename T, typename Function>
-ITimer<TimerInterval, T, Function>::~ITimer()
+ITimer::~ITimer()
 {
 }

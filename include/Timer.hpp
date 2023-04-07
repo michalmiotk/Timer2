@@ -9,34 +9,32 @@
 #include "ITimer.hpp"
 
 
-template <typename TimerInterval=std::chrono::milliseconds, typename T=secondsDouble, typename Function=std::function<void()>>
-class Timer: public ITimer<TimerInterval, T>{
+class Timer: public ITimer{
 public:
-    Timer(std::unique_ptr<IRunner<TimerInterval>> runner, std::unique_ptr<IStoper<T>> stoper): runner(std::move(runner)), stoper(std::move(stoper)){};
-    void start(Function, TimerInterval);
+    Timer(std::unique_ptr<IRunner<std::chrono::milliseconds, std::function<void(void)>>> runner, std::unique_ptr<IStoper> stoper): runner(std::move(runner)), stoper(std::move(stoper)){};
+    void start(std::function<void(void)>, std::chrono::milliseconds);
     void stop();
-    T getElapsedTime() const;
+    secondsDouble getElapsedTime() const;
 private:
-    std::unique_ptr<IRunner<TimerInterval>> runner;
-    std::unique_ptr<IStoper<T>> stoper;
+    std::unique_ptr<IRunner<std::chrono::milliseconds, std::function<void(void)>>> runner;
+    std::unique_ptr<IStoper> stoper;
     std::jthread t;
     State state{State::stop};
 };
 
 
-template <typename TimerInterval, typename T, typename Function>
-void Timer<TimerInterval, T, Function>::start(Function fn, TimerInterval interval){
+
+void Timer::start(std::function<void(void)> function, std::chrono::milliseconds interval){
     if(state==State::start)
     {
         return;
     }
     stoper->start();
-    t = std::jthread(&IRunner<TimerInterval>::run, std::ref(*runner), fn, interval);
+    t = std::jthread(&IRunner<std::chrono::milliseconds, std::function<void(void)>>::run, std::ref(*runner), function, interval);
     state = State::start;
 }
 
-template <typename TimerInterval, typename T, typename Function>
-void Timer<TimerInterval, T, Function>::stop(){
+void Timer::stop(){
     if(state == State::stop){
         return;
     }
@@ -44,7 +42,7 @@ void Timer<TimerInterval, T, Function>::stop(){
     runner->stop();
 }
 
-template <typename TimerInterval, typename T, typename Function>
-T Timer<TimerInterval, T, Function>::getElapsedTime() const{
-   return stoper->getElapsedTime();
+
+secondsDouble Timer::getElapsedTime() const{
+    return stoper->getElapsedTime();
 }

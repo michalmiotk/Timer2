@@ -6,27 +6,25 @@
 #include "IStoper.hpp"
 
 
-template <typename T=secondsDouble>
-class Stoper: public IStoper<T>{
+class Stoper: public IStoper{
 public:
-    T getElapsedTime() const override;
+    secondsDouble getElapsedTime() const override;
     void start() override;
 private:
     State state{State::stop};
     std::chrono::time_point<std::chrono::steady_clock> startTime;
 };
 
-template <typename T>
-T Stoper<T>::getElapsedTime() const{
+
+secondsDouble Stoper::getElapsedTime() const{
     if(state == State::stop)
     {
         return {};
     }
-    return std::chrono::duration_cast<T>(std::chrono::steady_clock::now() - startTime);
+    return std::chrono::duration_cast<secondsDouble>(std::chrono::steady_clock::now() - startTime);
 }
 
-template <typename T>
-void Stoper<T>::start(){
+void Stoper::start(){
     state = State::start;
     startTime = std::chrono::steady_clock::now();
 }

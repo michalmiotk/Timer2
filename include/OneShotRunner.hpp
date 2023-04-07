@@ -4,31 +4,30 @@
 
 #include "IRunner.hpp"
 
-
-template <typename T=std::chrono::milliseconds>
-class OneShotRunner: public IRunner<T>{
+template <typename Interval=std::chrono::milliseconds, typename Function=std::function<void()>, typename ... Args>
+class OneShotRunner: public IRunner<Interval, Function, Args...>{
 public:
-    void stop() override;
-    void run(std::function<void()> fn, T timeToStart) override;
+    void stop() override; 
+    void run(Function, Interval timeToStart, Args...) override;
     OneShotRunner();
 private:
     std::promise<void> stopPromise;
     std::future<void> stopFuture;
 };
 
-template <typename T>
-void OneShotRunner<T>::stop(){
+template <typename Interval, typename Function, typename ... Args>
+void OneShotRunner<Interval, Function, Args...>::stop(){
     stopPromise.set_value();
 }
 
-template <typename T>
-void OneShotRunner<T>::run(std::function<void()> fn, T timeToStart){
+template <typename Interval, typename Function, typename ... Args>
+void OneShotRunner<Interval, Function, Args...>::run(Function fn, Interval timeToStart, Args... args){
     if(stopFuture.wait_for(timeToStart) == std::future_status::timeout){
-        fn();
+        fn(args...);
     }
 }
 
-template <typename T>
-OneShotRunner<T>::OneShotRunner(){
+template <typename Interval, typename Function, typename ... Args>
+OneShotRunner<Interval, Function, Args...>::OneShotRunner(){
     stopFuture = stopPromise.get_future();
 }

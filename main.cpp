@@ -11,9 +11,9 @@
 
 int main()
 {
-  Timer<> oneShotTimer{std::make_unique<OneShotRunner<>>(), std::make_unique<Stoper<>>()};
-  Timer<> recurrentTimer{std::make_unique<RecurrentRunner<>>(), std::make_unique<Stoper<>>()};
-  Timer<> recurrentTimer150{std::make_unique<RecurrentRunner<>>(), std::make_unique<Stoper<>>()};
+  Timer oneShotTimer{std::make_unique<OneShotRunner<>>(), std::make_unique<Stoper>()};
+  Timer recurrentTimer{std::make_unique<RecurrentRunner<>>(), std::make_unique<Stoper>()};
+  Timer recurrentTimer150{std::make_unique<RecurrentRunner<>>(), std::make_unique<Stoper>()};
   
   std::string userInput;
   std::cout<<"please give time interval in seconds and press ENTER"<<std::endl;
