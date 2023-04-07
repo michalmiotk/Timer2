@@ -1,10 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "Timer.hpp"
 #include "OneShotRunner.hpp"
-#include "RecurrentRunner.hpp"
-#include "IStoper.hpp"
 #include "types.hpp"
 
 using namespace testing;

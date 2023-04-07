@@ -19,9 +19,9 @@ int main()
   std::cout<<"please give time interval in seconds and press ENTER"<<std::endl;
   std::cin>>userInput;
   auto timeInSeconds = std::stoi(userInput); 
-  oneShotTimer.start([](){ printf("Hello, I'm a single shot\n\r"); }, std::chrono::seconds{3*timeInSeconds});
-  recurrentTimer.start([](){ printf("Running...\n\r"); }, std::chrono::seconds{timeInSeconds});
-  recurrentTimer150.start([](){ printf("Walking...\n\r"); }, std::chrono::seconds{int(1.5*timeInSeconds)});
+  oneShotTimer.start([](){ std::cout<<"Hello, I'm a single shot\n\r"; }, std::chrono::seconds{3*timeInSeconds});
+  recurrentTimer.start([](){ std::cout<<"Running...\n\r"; }, std::chrono::seconds{timeInSeconds});
+  recurrentTimer150.start([](){ std::cout<<"Walking...\n\r"; }, std::chrono::seconds{int(1.5*timeInSeconds)});
   initscr();
   timeout(-1);  
   char c = '_';
