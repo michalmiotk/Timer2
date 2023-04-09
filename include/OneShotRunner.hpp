@@ -1,8 +1,11 @@
 #include <functional>
 #include <chrono>
 #include <future>
+#include <cassert>
 
 #include "IRunner.hpp"
+#include "IntervalLessThanZero.hpp"
+
 
 template <typename Interval=std::chrono::milliseconds, typename Function=std::function<void()>, typename ... Args>
 class OneShotRunner: public IRunner<Interval, Function, Args...>{
@@ -22,6 +25,9 @@ void OneShotRunner<Interval, Function, Args...>::stop(){
 
 template <typename Interval, typename Function, typename ... Args>
 void OneShotRunner<Interval, Function, Args...>::run(Function fn, Interval timeToStart, Args... args){
+    if(timeToStart.count()<0){
+        throw IntervalLessThanZero{};
+    }
     if(stopFuture.wait_for(timeToStart) == std::future_status::timeout){
         fn(args...);
     }

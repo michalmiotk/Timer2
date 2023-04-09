@@ -87,7 +87,6 @@ TEST_F(TestTimer, givenNotStartedTimer_whengetElapsedTimeIsCalledAfterAtLeast10m
 }
 
 
-
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);

@@ -3,6 +3,7 @@
 
 #include "OneShotRunner.hpp"
 #include "types.hpp"
+#include "IntervalLessThanZero.hpp"
 
 using namespace testing;
 
@@ -14,7 +15,7 @@ protected:
     const std::chrono::milliseconds interval{1};
 };
 
-TEST_F(TestOneShotRunner, givenTimerWithOneShotRunner_whenStartIsCalled_thenExpectCallCallback)
+TEST_F(TestOneShotRunner, givenOneShotRunner_whenRunIsCalled_thenExpectCallCallback)
 {
     EXPECT_CALL(mockCallback, Call());
 
@@ -22,7 +23,7 @@ TEST_F(TestOneShotRunner, givenTimerWithOneShotRunner_whenStartIsCalled_thenExpe
     oneShotRunner.run(mockCallback.AsStdFunction(), interval);
 }
 
-TEST_F(TestOneShotRunner, givenTimerWithOneShotRunnerWithArgs_whenStartIsCalled_thenExpectCallCallback)
+TEST_F(TestOneShotRunner, givenOneShotRunnerWithArgs_whenRunIsCalled_thenExpectCallCallback)
 {
     MockFunction<void(const int, const int)> mockCallbackWithArgs;
     const  int firstArgument=1;
@@ -31,6 +32,14 @@ TEST_F(TestOneShotRunner, givenTimerWithOneShotRunnerWithArgs_whenStartIsCalled_
 
     OneShotRunner<std::chrono::milliseconds, std::function<void(const int, const int)>, const int, const int> oneShotRunner{};
     oneShotRunner.run(mockCallbackWithArgs.AsStdFunction(), interval,firstArgument, secondArgument);
+}
+
+TEST_F(TestOneShotRunner, givenOneShotRunner_whenRunIsCalledWithMinus1MillisecondsTimeToCall_thenExpectThrow)
+{
+    OneShotRunner<> oneShotRunner{};
+    EXPECT_THROW({
+        oneShotRunner.run([]{}, std::chrono::milliseconds{-1});
+    }, IntervalLessThanZero);    
 }
 
 int main(int argc, char **argv)
