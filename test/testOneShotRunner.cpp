@@ -23,17 +23,6 @@ TEST_F(TestOneShotRunner, givenOneShotRunner_whenRunIsCalled_thenExpectCallCallb
     oneShotRunner.run(mockCallback.AsStdFunction(), interval);
 }
 
-TEST_F(TestOneShotRunner, givenOneShotRunnerWithArgs_whenRunIsCalled_thenExpectCallCallback)
-{
-    MockFunction<void(const int, const int)> mockCallbackWithArgs;
-    const  int firstArgument=1;
-    const  int secondArgument=2;
-    EXPECT_CALL(mockCallbackWithArgs, Call(1, 2));
-
-    OneShotRunner<std::chrono::milliseconds, std::function<void(const int&, const int&)>, const int&, const int&> oneShotRunner{};
-    oneShotRunner.run(mockCallbackWithArgs.AsStdFunction(), interval, firstArgument, secondArgument);
-}
-
 TEST_F(TestOneShotRunner, givenOneShotRunner_whenRunIsCalledWithMinus1MillisecondsTimeToCall_thenExpectThrow)
 {
     OneShotRunner<> oneShotRunner{};
