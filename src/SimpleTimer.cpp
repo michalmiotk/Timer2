@@ -1,7 +1,7 @@
-#include "Timer.hpp"
+#include "SimpleTimer.hpp"
 
 
-void Timer::start(){
+void SimpleTimer::start(){
     if(state==State::start)
     {
         return;
@@ -11,7 +11,7 @@ void Timer::start(){
     state = State::start;
 }
 
-void Timer::stop(){
+void SimpleTimer::stop(){
     if(state == State::stop){
         return;
     }
@@ -19,9 +19,9 @@ void Timer::stop(){
     runner->stop();
 }
 
-secondsDouble Timer::getElapsedTime() const{
+secondsDouble SimpleTimer::getElapsedTime() const{
     return stoper->getElapsedTime();
 }
 
-Timer::Timer(std::chrono::milliseconds time, std::function<void(void)> function, std::unique_ptr<IRunner<std::chrono::milliseconds, std::function<void(void)>>> runner, std::unique_ptr<IStoper> stoper):
+SimpleTimer::SimpleTimer(std::chrono::milliseconds time, std::function<void(void)> function, std::unique_ptr<IRunner<std::chrono::milliseconds, std::function<void(void)>>> runner, std::unique_ptr<IStoper> stoper):
     timeToCall(time), callable(function), runner(std::move(runner)), stoper(std::move(stoper)){};

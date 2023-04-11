@@ -4,7 +4,7 @@ include_directories(../src)
 
 add_executable(testTimer testTimer.cpp)
 target_include_directories(testTimer PUBLIC ../include)
-target_link_libraries(testTimer GTest::gtest_main GTest::gmock_main Timer Stoper)
+target_link_libraries(testTimer GTest::gtest_main GTest::gmock_main SimpleTimer Stoper)
 
 add_executable(testOneShotRunner testOneShotRunner.cpp)
 target_include_directories(testOneShotRunner PUBLIC ../include)

@@ -2,7 +2,7 @@
 
 #include <ncurses.h>
 
-#include "Timer.hpp"
+#include "SimpleTimer.hpp"
 #include "OneShotRunner.hpp"
 #include "RecurrentRunner.hpp"
 #include "Stoper.hpp"
@@ -15,9 +15,9 @@ int main()
   std::cout<<"please give time interval in seconds and press ENTER"<<std::endl;
   std::cin>>userInput;
   auto timeInSeconds = std::stoi(userInput); 
-  Timer oneShotTimer{std::chrono::seconds{3*timeInSeconds}, [](){ std::cout<<"Hello, I'm a single shot\n\r"; }, std::make_unique<OneShotRunner<>>(), std::make_unique<Stoper>()};
-  Timer recurrentTimer{std::chrono::seconds{timeInSeconds}, [](){ std::cout<<"Running...\n\r"; }, std::make_unique<RecurrentRunner<>>(), std::make_unique<Stoper>()};
-  Timer recurrentTimer150{std::chrono::seconds{int(1.5*timeInSeconds)}, [](){ std::cout<<"Walking...\n\r"; }, std::make_unique<RecurrentRunner<>>(), std::make_unique<Stoper>()};
+  SimpleTimer oneShotTimer{std::chrono::seconds{3*timeInSeconds}, [](){ std::cout<<"Hello, I'm a single shot\n\r"; }, std::make_unique<OneShotRunner<>>(), std::make_unique<Stoper>()};
+  SimpleTimer recurrentTimer{std::chrono::seconds{timeInSeconds}, [](){ std::cout<<"Running...\n\r"; }, std::make_unique<RecurrentRunner<>>(), std::make_unique<Stoper>()};
+  SimpleTimer recurrentTimer150{std::chrono::seconds{int(1.5*timeInSeconds)}, [](){ std::cout<<"Walking...\n\r"; }, std::make_unique<RecurrentRunner<>>(), std::make_unique<Stoper>()};
   oneShotTimer.start( );
   recurrentTimer.start( );
   recurrentTimer150.start();

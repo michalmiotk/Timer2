@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "Timer.hpp"
+#include "SimpleTimer.hpp"
 #include "OneShotRunner.hpp"
 #include "RecurrentRunner.hpp"
 #include "IStoper.hpp"
@@ -29,7 +29,7 @@ TEST_F(TestTimer, givenTimerWithOneShotRunner_whenStartIsCalled_thenExpectCallCa
 {
     EXPECT_CALL(mockCallback, Call());
 
-    Timer oneShotTimer{interval, mockCallback.AsStdFunction(), std::make_unique<OneShotRunner<>>(), std::move(niceMockStoperPtr)};
+    SimpleTimer oneShotTimer{interval, mockCallback.AsStdFunction(), std::make_unique<OneShotRunner<>>(), std::move(niceMockStoperPtr)};
     
     oneShotTimer.start();
 }
@@ -38,7 +38,7 @@ TEST_F(TestTimer, givenTimerWithOneShotRunner_whenStartIsCalled_thenExpectCallCa
 
 TEST_F(TestTimer, givenOneShotTimer_whenTimerFires_thenExpectGetElapsedTimeReturnAtLeastInterval)
 {
-    Timer oneShotTimer{interval, mockCallback.AsStdFunction(), std::make_unique<OneShotRunner<>>(), std::make_unique<Stoper>()};
+    SimpleTimer oneShotTimer{interval, mockCallback.AsStdFunction(), std::make_unique<OneShotRunner<>>(), std::make_unique<Stoper>()};
     EXPECT_CALL(mockCallback, Call()).WillOnce(
         Invoke([this, &oneShotTimer]{
             ASSERT_GE(oneShotTimer.getElapsedTime(), this->interval)
@@ -50,7 +50,7 @@ TEST_F(TestTimer, givenOneShotTimer_whenTimerFires_thenExpectGetElapsedTimeRetur
 TEST_F(TestTimer, givenTimer_whenCallingstart_thenExpectStoperstartMethodBeCalled)
 {
     EXPECT_CALL(*strictMockStoperPtr, start());
-    Timer timer{interval, []{}, std::make_unique<OneShotRunner<>>(), std::move(strictMockStoperPtr)};
+    SimpleTimer timer{interval, []{}, std::make_unique<OneShotRunner<>>(), std::move(strictMockStoperPtr)};
     
     timer.start();
     timer.stop();
@@ -61,7 +61,7 @@ TEST_F(TestTimer, givenNotStartedTimer_whengetElapsedTimeIsCalledAfterAtLeast10m
 {
     constexpr std::chrono::milliseconds timeToWait{10};
     constexpr std::chrono::milliseconds expectedResult{};
-    Timer timer{std::chrono::milliseconds{0}, []{}, std::make_unique<OneShotRunner<>>(), std::make_unique<Stoper>()};
+    SimpleTimer timer{std::chrono::milliseconds{0}, []{}, std::make_unique<OneShotRunner<>>(), std::make_unique<Stoper>()};
     std::this_thread::sleep_for(timeToWait);
 
     const auto resultOfGetElapsedTime = timer.getElapsedTime();
