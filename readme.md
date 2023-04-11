@@ -1,3 +1,6 @@
+# how to install 
+sudo apt install libncurses-dev
+
 # how to run
 ```
 mkdir build  
