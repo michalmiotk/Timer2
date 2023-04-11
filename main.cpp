@@ -11,17 +11,18 @@
 
 int main()
 {
-  Timer oneShotTimer{std::make_unique<OneShotRunner<>>(), std::make_unique<Stoper>()};
-  Timer recurrentTimer{std::make_unique<RecurrentRunner<>>(), std::make_unique<Stoper>()};
-  Timer recurrentTimer150{std::make_unique<RecurrentRunner<>>(), std::make_unique<Stoper>()};
+  
   
   std::string userInput;
   std::cout<<"please give time interval in seconds and press ENTER"<<std::endl;
   std::cin>>userInput;
   auto timeInSeconds = std::stoi(userInput); 
-  oneShotTimer.start([](){ std::cout<<"Hello, I'm a single shot\n\r"; }, std::chrono::seconds{3*timeInSeconds});
-  recurrentTimer.start([](){ std::cout<<"Running...\n\r"; }, std::chrono::seconds{timeInSeconds});
-  recurrentTimer150.start([](){ std::cout<<"Walking...\n\r"; }, std::chrono::seconds{int(1.5*timeInSeconds)});
+  Timer oneShotTimer{std::chrono::seconds{3*timeInSeconds}, [](){ std::cout<<"Hello, I'm a single shot\n\r"; }, std::make_unique<OneShotRunner<>>(), std::make_unique<Stoper>()};
+  Timer recurrentTimer{std::chrono::seconds{timeInSeconds}, [](){ std::cout<<"Running...\n\r"; }, std::make_unique<RecurrentRunner<>>(), std::make_unique<Stoper>()};
+  Timer recurrentTimer150{std::chrono::seconds{int(1.5*timeInSeconds)}, [](){ std::cout<<"Walking...\n\r"; }, std::make_unique<RecurrentRunner<>>(), std::make_unique<Stoper>()};
+  oneShotTimer.start( );
+  recurrentTimer.start( );
+  recurrentTimer150.start();
   initscr();
   timeout(-1);  
   char c = '_';
