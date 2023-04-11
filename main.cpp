@@ -10,9 +10,7 @@
 
 
 int main()
-{
-  
-  
+{  
   std::string userInput;
   std::cout<<"please give time interval in seconds and press ENTER"<<std::endl;
   std::cin>>userInput;

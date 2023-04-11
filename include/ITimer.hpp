@@ -1,3 +1,5 @@
+#pragma once
+
 #include <chrono>
 #include <functional>
 
@@ -5,12 +7,9 @@
 
 class ITimer{
 public:
-    void start();
-    void stop();
-    secondsDouble getElapsedTime() const;
+    virtual void start() = 0;
+    virtual void stop() = 0;
+    virtual secondsDouble getElapsedTime() const = 0;
     virtual ~ITimer();
 };
 
-ITimer::~ITimer()
-{
-}

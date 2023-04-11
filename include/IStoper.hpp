@@ -9,7 +9,3 @@ public:
     virtual void start() = 0;
     virtual ~IStoper();
 };
-
-IStoper::~IStoper()
-{
-}
