@@ -12,22 +12,22 @@ class TestOneShotRunner : public ::testing::Test
 {
 protected:
     MockFunction<void(void)> mockCallback;
-    const std::chrono::milliseconds interval{1};
+    const milliseconds interval{1};
 };
 
 TEST_F(TestOneShotRunner, givenOneShotRunner_whenRunIsCalled_thenExpectCallCallback)
 {
     EXPECT_CALL(mockCallback, Call());
 
-    OneShotRunner<> oneShotRunner{};
+    OneShotRunner oneShotRunner{};
     oneShotRunner.run(mockCallback.AsStdFunction(), interval);
 }
 
 TEST_F(TestOneShotRunner, givenOneShotRunner_whenRunIsCalledWithMinus1MillisecondsTimeToCall_thenExpectThrow)
 {
-    OneShotRunner<> oneShotRunner{};
+    OneShotRunner oneShotRunner{};
     EXPECT_THROW({
-        oneShotRunner.run([]{}, std::chrono::milliseconds{-1});
+        oneShotRunner.run([]{}, {-1});
     }, IntervalLessThanZero);    
 }
 

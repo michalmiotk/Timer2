@@ -6,7 +6,9 @@ secondsDouble Stoper::getElapsedTime() const{
     {
         return {};
     }
-    return std::chrono::duration_cast<secondsDouble>(std::chrono::steady_clock::now() - startTime);
+    using secondsDoubleChrono = std::chrono::duration<double>;
+    auto elapsedTime = std::chrono::duration_cast<secondsDoubleChrono>(std::chrono::steady_clock::now() - startTime);
+    return elapsedTime.count();
 }
 
 void Stoper::start(){
