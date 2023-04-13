@@ -25,6 +25,5 @@ int main()
     }
   }
   endwin();
-  t.stop();
   return 0;
 }

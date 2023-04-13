@@ -7,6 +7,7 @@
 #include "types.hpp"
 #include "Stoper.hpp"
 
+
 class SimpleTimer
 {
 public:
@@ -14,7 +15,8 @@ public:
     void start();
     void stop();
     void setTime(const milliseconds);
-    secondsDouble getElapsedTime();
+    secondsDouble getElapsedTime() const;
+    ~SimpleTimer();
 private:
     const TimerType type;
     milliseconds time;

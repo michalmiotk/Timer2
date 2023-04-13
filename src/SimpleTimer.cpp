@@ -1,5 +1,5 @@
 #include "SimpleTimer.hpp"
-#include <iostream>
+
 
 SimpleTimer::SimpleTimer(const TimerType type, const milliseconds time, const std::function<void(void)> callable) : type(type), time(time), callable(callable)
 {
@@ -48,7 +48,13 @@ void SimpleTimer::setTime(const milliseconds newTime)
     time = newTime;
 }
 
-secondsDouble SimpleTimer::getElapsedTime()
+secondsDouble SimpleTimer::getElapsedTime() const
 {
     return stoper.getElapsedTime();
+}
+
+
+SimpleTimer::~SimpleTimer()
+{
+    stop();
 }

@@ -12,5 +12,5 @@ cd build && cmake -DCMAKE_CXX_COMPILER=g++ .. && make
 ```
 mkdir build  
 cd build && cmake -DCMAKE_CXX_COMPILER=g++ .. && make  
-./test/test
+./test/testSimpleTimer
 ```
