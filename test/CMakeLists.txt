@@ -1,11 +1,10 @@
 find_package(GTest)
 include_directories(../src)
 
-add_executable(testOneShotRunner testOneShotRunner.cpp)
-target_include_directories(testOneShotRunner PUBLIC ../include)
-target_link_libraries(testOneShotRunner GTest::gtest_main GTest::gmock_main OneShotRunner)
-
 include(GoogleTest)
 
+add_executable(testSimpleTimer testSimpleTimer.cpp)
+target_include_directories(testSimpleTimer PUBLIC ../include)
+target_link_libraries(testSimpleTimer GTest::gtest_main GTest::gmock_main SimpleTimer Stoper)
 
-add_custom_command(TARGET testOneShotRunner POST_BUILD COMMAND ./testOneShotRunner)
+gtest_discover_tests(testSimpleTimer)

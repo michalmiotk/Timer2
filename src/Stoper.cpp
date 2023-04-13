@@ -2,7 +2,7 @@
 
 
 secondsDouble Stoper::getElapsedTime() const{
-    if(state == State::stop)
+    if(isStarted == false)
     {
         return {};
     }
@@ -12,6 +12,6 @@ secondsDouble Stoper::getElapsedTime() const{
 }
 
 void Stoper::start(){
-    state = State::start;
+    isStarted = true;
     startTime = std::chrono::steady_clock::now();
 }

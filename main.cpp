@@ -1,11 +1,8 @@
 #include <iostream>
 
 #include <ncurses.h>
- 
-#include "OneShotRunner.hpp"
-#include "Stoper.hpp"
-#include "types.hpp"
-#include "Timer.hpp"
+
+#include "SimpleTimer.hpp"
 
 int main()
 {  
@@ -13,8 +10,9 @@ int main()
   std::cout<<"please give time interval in seconds and press ENTER"<<std::endl;
   std::cin>>userInput;
   auto timeInSeconds = std::stoi(userInput); 
-  Timer t{TimerType::oneShot, timeInSeconds*1000};
+  SimpleTimer t{TimerType::oneShot, timeInSeconds*1000, []{std::cout<<"I am one shot"<<std::endl;}};
   t.start();
+  t.setTime(10000);
   initscr();
   timeout(-1);  
   char c = '_';
@@ -27,6 +25,6 @@ int main()
     }
   }
   endwin();
- 
+  t.stop();
   return 0;
 }

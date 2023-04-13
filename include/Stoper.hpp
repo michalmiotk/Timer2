@@ -11,6 +11,6 @@ public:
     secondsDouble getElapsedTime() const override;
     void start() override;
 private:
-    State state{State::stop};
+    bool isStarted{false}; 
     std::chrono::time_point<std::chrono::steady_clock> startTime;
 };
