@@ -16,7 +16,7 @@ void SimpleTimer::start()
     {
         throw IntervalLessThanZero{};
     }
-    t = std::jthread(&SimpleTimer::oneShotCall, this, time);
+    t = std::thread(&SimpleTimer::oneShotCall, this, time);
     state = State::start;
 }
 

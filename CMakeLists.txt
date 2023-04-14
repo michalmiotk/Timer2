@@ -6,7 +6,7 @@ set(CMAKE_PROJECT_VERSION_MAJOR "")
 set(CMAKE_PROJECT_VERSION_MINOR "")
 set(CMAKE_PROJECT_VERSION_PATCH "")
 
-add_compile_options(-Wall -Wextra -Wpedantic --std=c++23)
+add_compile_options(-Wall -Wextra -Wpedantic --std=c++17)
 
 find_library(curses NAMES curses)
 

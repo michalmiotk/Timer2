@@ -24,7 +24,7 @@ private:
     Stoper stoper;
     std::promise<void> stopPromise;
     std::future<void> stopFuture;
-    std::jthread t;
+    std::thread t;
     State state{State::stop};
     void oneShotCall(const milliseconds timeToWait);
 };
