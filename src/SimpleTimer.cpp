@@ -1,6 +1,5 @@
 #include "SimpleTimer.hpp"
 
-
 SimpleTimer::SimpleTimer(const TimerType type, const milliseconds time, const std::function<void(void)> callable) : type(type), time(time), callable(callable)
 {
     stopFuture = stopPromise.get_future();
@@ -36,7 +35,7 @@ void SimpleTimer::stop()
     }
     stopPromise.set_value();
     if(t.joinable()){
-        t.join();
+	    t.join();
     }
     state = State::stop;
     stopPromise = std::promise<void>();
@@ -56,5 +55,8 @@ secondsDouble SimpleTimer::getElapsedTime() const
 
 SimpleTimer::~SimpleTimer()
 {
-    stop();
+    stopPromise.set_value();
+    if(t.joinable()){
+	    t.join();
+    }
 }
